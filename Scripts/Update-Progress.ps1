@@ -1,18 +1,19 @@
-Write-Host "📊 Updating LeetCode Progress Statistics" -ForegroundColor Cyan
-Write-Host "=" * 45
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+Write-Host "Updating LeetCode Progress Statistics" -ForegroundColor Cyan
+Write-Host ("=" * 45)
 
 try {
     # Count solutions by difficulty
-    $easySolutions = @(Get-ChildItem -Path "LeetCodeSolutions.Core\Easy\*.cs" -Exclude "*ISolution*", "*Difficulty*" | Where-Object { $_.BaseName -ne "ISolution" -and $_.BaseName -ne "Difficulty" })
-    $mediumSolutions = @(Get-ChildItem -Path "LeetCodeSolutions.Core\Medium\*.cs" -ErrorAction SilentlyContinue)
-    $hardSolutions = @(Get-ChildItem -Path "LeetCodeSolutions.Core\Hard\*.cs" -ErrorAction SilentlyContinue)
+    $easySolutions = @(Get-ChildItem -Path "LeetCodeSolutions.Core\Easy\*.cs" -ErrorAction SilentlyContinue | Where-Object { $_.BaseName -notmatch '^(ISolution|Difficulty)$' })
+    $mediumSolutions = @(Get-ChildItem -Path "LeetCodeSolutions.Core\Medium\*.cs" -ErrorAction SilentlyContinue | Where-Object { $_.BaseName -notmatch '^(ISolution|Difficulty)$' })
+    $hardSolutions = @(Get-ChildItem -Path "LeetCodeSolutions.Core\Hard\*.cs" -ErrorAction SilentlyContinue | Where-Object { $_.BaseName -notmatch '^(ISolution|Difficulty)$' })
 
     $easyCount = $easySolutions.Count
     $mediumCount = $mediumSolutions.Count
     $hardCount = $hardSolutions.Count
     $totalCount = $easyCount + $mediumCount + $hardCount
 
-    Write-Host "📈 Current Statistics:" -ForegroundColor Green
+    Write-Host "Current Statistics:" -ForegroundColor Green
     Write-Host "   Easy: $easyCount solved"
     Write-Host "   Medium: $mediumCount solved" 
     Write-Host "   Hard: $hardCount solved"
@@ -25,10 +26,11 @@ try {
         exit 1
     }
 
-    $readmeContent = Get-Content $readmePath -Raw
+    # Read with correct encoding
+    $readmeContent = Get-Content $readmePath -Raw -Encoding UTF8
 
     # Update statistics section
-    $statisticsPattern = "### Statistics.*?(?=### |\z)"
+    $statisticsPattern = '(?s)### Statistics\s*?\r?\n.*?(?=\r?\n###|$)'
     $newStatistics = @"
 ### Statistics
 - **Total Solved**: $totalCount
@@ -37,21 +39,23 @@ try {
 - **Hard**: $hardCount/665 ($([math]::Round($hardCount/665*100, 2))%)
 "@
 
-    $updatedContent = $readmeContent -replace $statisticsPattern, $newStatistics, "Singleline"
+    # Update content
+    $updatedContent = $readmeContent -replace $statisticsPattern, $newStatistics
 
     # Update the last updated date
-    $datePattern = "\*Last Updated:.*?\*"
+    $datePattern = '\*Last Updated:.*?\*'
     $newDate = "*Last Updated: $(Get-Date -Format 'MMMM d, yyyy')*"
     $updatedContent = $updatedContent -replace $datePattern, $newDate
 
-    # Write back to README
-    Set-Content -Path $readmePath -Value $updatedContent -Encoding UTF8
+    # Write back to README with UTF8 encoding
+    [System.IO.File]::WriteAllText($readmePath, $updatedContent, [System.Text.Encoding]::UTF8)
 
-    Write-Host "✅ README.md updated successfully!" -ForegroundColor Green
-    Write-Host "📝 Remember to commit your changes to Git" -ForegroundColor Yellow
+    Write-Host "README.md updated successfully!" -ForegroundColor Green
+    Write-Host "Remember to commit your changes to Git" -ForegroundColor Yellow
 }
 catch {
-    Write-Error "❌ Failed to update progress: $_"
+    $errorMessage = $_ | Format-List * | Out-String
+    Write-Error "Failed to update progress: $_"
+    Write-Error "Error Details: $errorMessage"
     exit 1
 }
-"@

@@ -1,4 +1,4 @@
-# LeetCode Solutions in C# .NET
+﻿# LeetCode Solutions in C# .NET
 
 ![.NET](https://img.shields.io/badge/.NET-8.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
@@ -83,13 +83,10 @@ dotnet test --filter "ClassName=TwoSumTests"
 - [ ] Coming soon...
 
 ### Statistics
-- **Total Solved**: 1
-- **Easy**: 1/1963 (0.05%)
+- **Total Solved**: 2
+- **Easy**: 2/1963 (0.1%)
 - **Medium**: 0/1569 (0%)
 - **Hard**: 0/665 (0%)
-
-## 🛠 Development Workflow
-
 ### Adding a New Solution
 
 1. **Create the solution class** in the appropriate difficulty folder:
