@@ -121,17 +121,16 @@ try {
     Set-Content -Path $SolutionFilePath -Value $SolutionContent -Encoding UTF8
     Set-Content -Path $TestFilePath -Value $TestContent -Encoding UTF8
 
-    Write-Host "✅ Created solution template:" -ForegroundColor Green
-    Write-Host "   📄 $SolutionFilePath" -ForegroundColor Gray
-    Write-Host "   🧪 $TestFilePath" -ForegroundColor Gray
+    Write-Host "Created solution template:" -ForegroundColor Green
+    Write-Host "   Solution: $SolutionFilePath" -ForegroundColor Gray
+    Write-Host "   Tests: $TestFilePath" -ForegroundColor Gray
     Write-Host ""
-    Write-Host "📝 Next steps:" -ForegroundColor Yellow
+    Write-Host "Next steps:" -ForegroundColor Yellow
     Write-Host "   1. Implement the solution method in $ClassName.cs"
     Write-Host "   2. Add comprehensive tests in $($ClassName)Tests.cs"
     Write-Host "   3. Update the README.md progress section"
     Write-Host "   4. Commit your changes to Git"
 }
 catch {
-    Write-Error "❌ Failed to create files: $_"
+    Write-Error "Failed to create files: $_"
 }
-"@
